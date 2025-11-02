@@ -9,11 +9,11 @@ pipeline {
     environment {
         // Docker Registry Configuration
         DOCKER_REGISTRY = '' // Kosongkan untuk Docker Hub
-        DOCKER_IMAGE_NAME = 'h4lfbaked/springboot-test-3n192jdkska29831'
+        DOCKER_IMAGE_NAME = 'h4lfbaked/springboot-test-boost'
         DOCKER_CREDENTIALS_ID = 'docker-password' // ID credentials di Jenkins
         
         // Application Configuration
-        APP_NAME = 'springboot-test'
+        APP_NAME = 'springboot-test-boost'
         APP_VERSION = "1.0.0"
     }
     
@@ -56,9 +56,22 @@ pipeline {
             }
         }
         
-        stage('4. Docker Build & Push') {
+        stage('4. Install to Maven Repository') {
             steps {
-                echo '=== Stage 4: Building and Pushing Docker Image ==='
+                echo '=== Stage 4: Installing JAR to Maven Repository ==='
+                sh 'mvn clean install -DskipTests'
+            }
+            post {
+                success {
+                    echo "JAR installed to Maven repository successfully"
+                    echo "You can now use this library as a dependency in other projects"
+                }
+            }
+        }
+        
+        stage('5. Docker Build & Push') {
+            steps {
+                echo '=== Stage 5: Building and Pushing Docker Image ==='
                 script {
                     def dockerImage = docker.build("${DOCKER_IMAGE_NAME}:${APP_VERSION}")
                     
@@ -72,9 +85,9 @@ pipeline {
             }
         }
         
-        stage('5. Deploy') {
+        stage('6. Deploy') {
             steps {
-                echo '=== Stage 5: Deploying Application ==='
+                echo '=== Stage 6: Deploying Application ==='
                 script {
                     def port = '8079'
                     def envSuffix = 'prod'
