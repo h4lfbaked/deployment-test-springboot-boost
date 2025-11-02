@@ -105,17 +105,17 @@ pipeline {
                         // Buat settings.xml dengan credentials
                         sh """
                             mkdir -p ~/.m2
-                            cat > ~/.m2/settings.xml << 'EOF'
-                            <settings xmlns="http://maven.apache.org/SETTINGS/1.0.0">
-                            <servers>
-                                <server>
-                                <id>halfbaked-nexus</id>
-                                <username>\${NEXUS_USERNAME}</username>
-                                <password>\${NEXUS_PASSWORD}</password>
-                                </server>
-                            </servers>
-                            </settings>
-                            EOF
+                            cat > ~/.m2/settings.xml <<EOF
+<settings xmlns="http://maven.apache.org/SETTINGS/1.0.0">
+  <servers>
+    <server>
+      <id>halfbaked-nexus</id>
+      <username>\${NEXUS_USERNAME}</username>
+      <password>\${NEXUS_PASSWORD}</password>
+    </server>
+  </servers>
+</settings>
+EOF
                         """
                         
                         // Deploy ke Nexus
