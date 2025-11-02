@@ -30,6 +30,16 @@
 	<properties>
 		<java.version>21</java.version>
 	</properties>
+	
+	<!-- Distribution Management akan di-override oleh Jenkinsfile sesuai branch -->
+	<distributionManagement>
+		<repository>
+			<id>halfbaked-nexus</id>
+			<name>Halfbaked Nexus Repository</name>
+			<url>http://178.128.68.234:8081/repository/halfbaked-releases/</url>
+		</repository>
+	</distributionManagement>
+	
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>

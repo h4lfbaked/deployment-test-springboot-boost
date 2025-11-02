@@ -74,6 +74,47 @@ pipeline {
             }
         }
         
+        stage('4.1. Deploy to Nexus Repository') {
+            steps {
+                script {
+                    // Tentukan Nexus repository berdasarkan branch
+                    def nexusRepo = 'halfbaked-releases'
+                    def nexusUrl = "http://178.128.68.234:8081/repository/${nexusRepo}/"
+                    def environment = 'Production'
+                    
+                    if (env.BRANCH_NAME == 'dev') {
+                        nexusRepo = 'halfbaked-dev'
+                        nexusUrl = "http://178.128.68.234:8081/repository/${nexusRepo}/"
+                        environment = 'Development'
+                    } else if (env.BRANCH_NAME == 'uat') {
+                        nexusRepo = 'halfbaked-uat'
+                        nexusUrl = "http://178.128.68.234:8081/repository/${nexusRepo}/"
+                        environment = 'UAT'
+                    } else if (env.BRANCH_NAME == 'main') {
+                        nexusRepo = 'halfbaked-releases'
+                        nexusUrl = "http://178.128.68.234:8081/repository/${nexusRepo}/"
+                        environment = 'Production'
+                    }
+                    
+                    echo "=== Stage 4.1: Deploying JAR to Nexus Repository ==="
+                    echo "Environment: ${environment}"
+                    echo "Repository: ${nexusRepo}"
+                    echo "URL: ${nexusUrl}"
+                    
+                    withCredentials([usernamePassword(credentialsId: 'nexus-credentials', usernameVariable: 'NEXUS_USERNAME', passwordVariable: 'NEXUS_PASSWORD')]) {
+                        sh """
+                            mvn deploy -DskipTests \
+                            -DaltDeploymentRepository=halfbaked-nexus::default::${nexusUrl} \
+                            -Dusername=\${NEXUS_USERNAME} \
+                            -Dpassword=\${NEXUS_PASSWORD}
+                        """
+                    }
+                    
+                    echo "JAR deployed to Nexus ${nexusRepo} successfully!"
+                }
+            }
+        }
+        
         stage('5. Docker Build & Push') {
             steps {
                 echo '=== Stage 5: Building and Pushing Docker Image ==='
