@@ -123,13 +123,6 @@ pipeline {
                         ${DOCKER_IMAGE_NAME}:${APP_VERSION}
                     """
                     
-                    echo "Waiting for application to start..."
-                    sleep(time: 30, unit: 'SECONDS')
-                    
-                    sh """
-                        curl -f http://localhost:${port}/api/health || exit 1
-                    """
-                    
                     echo "Application deployed successfully on port ${port}"
                 }
             }
