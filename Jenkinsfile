@@ -102,11 +102,26 @@ pipeline {
                     echo "URL: ${nexusUrl}"
                     
                     withCredentials([usernamePassword(credentialsId: 'nexus-credentials', usernameVariable: 'NEXUS_USERNAME', passwordVariable: 'NEXUS_PASSWORD')]) {
+                        // Buat settings.xml dengan credentials
+                        sh """
+                            mkdir -p ~/.m2
+                            cat > ~/.m2/settings.xml << 'EOF'
+                            <settings xmlns="http://maven.apache.org/SETTINGS/1.0.0">
+                            <servers>
+                                <server>
+                                <id>halfbaked-nexus</id>
+                                <username>\${NEXUS_USERNAME}</username>
+                                <password>\${NEXUS_PASSWORD}</password>
+                                </server>
+                            </servers>
+                            </settings>
+                            EOF
+                        """
+                        
+                        // Deploy ke Nexus
                         sh """
                             mvn deploy -DskipTests \
-                            -DaltDeploymentRepository=halfbaked-nexus::default::${nexusUrl} \
-                            -Dusername=\${NEXUS_USERNAME} \
-                            -Dpassword=\${NEXUS_PASSWORD}
+                            -DaltDeploymentRepository=halfbaked-nexus::default::${nexusUrl}
                         """
                     }
                     
