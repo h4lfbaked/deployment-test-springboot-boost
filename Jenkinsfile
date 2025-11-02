@@ -39,6 +39,8 @@ pipeline {
         stage('2. Build & Test') {
             steps {
                 echo '=== Stage 2: Building and Testing Application ==='
+                // Hapus settings.xml lama yang mungkin corrupt dari build sebelumnya
+                sh 'rm -f ~/.m2/settings.xml'
                 sh 'mvn clean test'
             }
             post {
@@ -102,9 +104,8 @@ pipeline {
                     echo "URL: ${nexusUrl}"
                     
                     withCredentials([usernamePassword(credentialsId: 'nexus-credentials', usernameVariable: 'NEXUS_USERNAME', passwordVariable: 'NEXUS_PASSWORD')]) {
-                        // Hapus settings.xml lama dan buat yang baru
+                        // Buat settings.xml dengan credentials Nexus
                         sh """
-                            rm -f ~/.m2/settings.xml
                             mkdir -p ~/.m2
                             cat > ~/.m2/settings.xml <<'SETTINGSEOF'
 <settings xmlns="http://maven.apache.org/SETTINGS/1.0.0">
