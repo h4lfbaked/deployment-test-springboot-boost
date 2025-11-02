@@ -9,11 +9,11 @@ pipeline {
     environment {
         // Docker Registry Configuration
         DOCKER_REGISTRY = '' // Kosongkan untuk Docker Hub
-        DOCKER_IMAGE_NAME = 'h4lfbaked/springboot-test-3n192jdkska29831'
+        DOCKER_IMAGE_NAME = 'h4lfbaked/springboot-test-boost'
         DOCKER_CREDENTIALS_ID = 'docker-password' // ID credentials di Jenkins
         
         // Application Configuration
-        APP_NAME = 'springboot-test'
+        APP_NAME = 'springboot-test-boost'
         APP_VERSION = "1.0.0"
     }
     
